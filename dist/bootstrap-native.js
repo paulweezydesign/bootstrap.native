@@ -240,8 +240,8 @@
       e.preventDefault();
       if (vars.isSliding) { return; }
       var eventTarget = e.target;
-      if ( eventTarget && !eventTarget.classList.contains('active') && eventTarget.getAttribute('data-bs-slide-to') ) {
-        vars.index = parseInt( eventTarget.getAttribute('data-bs-slide-to'));
+      if ( eventTarget && !eventTarget.classList.contains('active') && eventTarget.getAttribute('data-slide-to') ) {
+        vars.index = parseInt( eventTarget.getAttribute('data-slide-to'));
       } else { return false; }
       self.slideTo( vars.index );
     }
