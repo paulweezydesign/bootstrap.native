@@ -182,7 +182,7 @@ function alertTransitionEnd(self) {
   element.dispatchEvent(closedAlertEvent);
 
   self.dispose();
-  element.parentNode.removeChild(element);
+  element.remove();
 }
 
 // ALERT PRIVATE METHOD
@@ -1481,7 +1481,7 @@ function toggleOverlayType(isModal) {
 
 function appendOverlay(hasFade, isModal) {
   toggleOverlayType(isModal);
-  document.body.appendChild(overlay);
+  document.body.append(overlay);
   if (hasFade) addClass(overlay, fadeClass);
 }
 
@@ -1495,12 +1495,11 @@ function hideOverlay() {
 }
 
 function removeOverlay() {
-  const bd = document.body;
   const currentOpen = getCurrentOpen();
 
   if (!currentOpen) {
     removeClass(overlay, fadeClass);
-    bd.removeChild(overlay);
+    overlay.remove();
     resetScrollbar();
   }
 }
@@ -2324,7 +2323,7 @@ function closestRelative(element) {
 function setHtml(element, content, sanitizeFn) {
   if (typeof content === 'string' && !content.length) return;
 
-  if (content instanceof Element) {
+  if (typeof content === 'object') {
     element.append(content);
   } else {
     let dirty = content.trim(); // fixing #233
@@ -2410,19 +2409,23 @@ function createPopover(self) {
   // set initial popover class
   const placementClass = `bs-${popoverString}-${tipClassPositions[placement]}`;
 
-  self.popover = document.createElement('div');
+  // load template
+  let popoverTemplate;
+  if (typeof template === 'object') {
+    popoverTemplate = template;
+  } else {
+    const htmlMarkup = document.createElement('div');
+    setHtml(htmlMarkup, template, sanitizeFn);
+    popoverTemplate = htmlMarkup.firstChild;
+  }
+  // set popover markup
+  self.popover = popoverTemplate.cloneNode(true);
+
   const { popover } = self;
 
   // set id and role attributes
   popover.setAttribute('id', id);
   popover.setAttribute('role', 'tooltip');
-
-  // load template
-  const popoverTemplate = document.createElement('div');
-  setHtml(popoverTemplate, template, sanitizeFn);
-  const htmlMarkup = popoverTemplate.firstChild;
-  popover.className = htmlMarkup.className;
-  setHtml(popover, htmlMarkup.innerHTML, sanitizeFn);
 
   const popoverHeader = queryElement(`.${popoverHeaderClass}`, popover);
   const popoverBody = queryElement(`.${popoverBodyClass}`, popover);
@@ -2433,11 +2436,11 @@ function createPopover(self) {
   // set dismissible button
   if (dismissible) {
     if (title) {
-      if (title instanceof Element) title.innerHTML += btnClose;
+      if (title instanceof Element) setHtml(title, btnClose, sanitizeFn);
       else title += btnClose;
     } else {
       if (popoverHeader) popoverHeader.remove();
-      if (content instanceof Element) content.innerHTML += btnClose;
+      if (content instanceof Element) setHtml(content, btnClose, sanitizeFn);
       else content += btnClose;
     }
   }
@@ -3278,23 +3281,24 @@ function createTooltip(self) {
 
   if (!title) return;
 
-  // create tooltip
-  self.tooltip = document.createElement('div');
-  const { tooltip } = self;
+  // load template
+  let tooltipTemplate;
+  if (typeof template === 'object') {
+    tooltipTemplate = template;
+  } else {
+    const htmlMarkup = document.createElement('div');
+    setHtml(htmlMarkup, template, sanitizeFn);
+    tooltipTemplate = htmlMarkup.firstChild;
+  }
 
+  // create tooltip
+  self.tooltip = tooltipTemplate.cloneNode(true);
+  const { tooltip } = self;
+  // set title
+  setHtml(queryElement(`.${tooltipInnerClass}`, tooltip), title, sanitizeFn);
   // set id & role attribute
   tooltip.setAttribute('id', id);
   tooltip.setAttribute('role', tooltipString);
-
-  // set markup
-  const tooltipTemplate = document.createElement('div');
-  setHtml(tooltipTemplate, template, sanitizeFn);
-  setHtml(queryElement(`.${tooltipInnerClass}`, tooltipTemplate), title, sanitizeFn);
-  const htmlMarkup = tooltipTemplate.firstChild;
-
-  // fill content
-  tooltip.className = htmlMarkup.className;
-  setHtml(tooltip, htmlMarkup.innerHTML);
 
   // set arrow
   self.arrow = queryElement(`.${tooltipString}-arrow`, tooltip);
