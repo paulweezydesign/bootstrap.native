@@ -62,6 +62,10 @@ html {
 /* misc */
 .popover .close {line-height: 0.75;}
 .popover .btn-close {position: absolute; right:0.75em}
+[dir="rtl"] .popover .btn-close {
+  left: 0.75em;
+  right: auto;
+}
 
 /* bg */
 .bg-bootstrap { background-color: #563d7c }
@@ -87,8 +91,11 @@ pre[class*="language-"] {margin: 0 0 1rem}
   top: 0.5rem
 }
 .nav-stacked ul {
-  padding-left: 1rem;
+  padding: 0 0 0 1rem;
   display: none
+}
+[dir="rtl"] .nav-stacked ul {
+  padding: 0 1rem 0 0;
 }
 .nav-stacked li > a.active + ul { display: block }
 
@@ -165,32 +172,19 @@ nav.border-bottom {
   border-color: transparent
 }
 
-/* DROPDOWN */
-/* .dropdown-menu-end {
-  right: 0;
-  left: auto;
-} */
-
-/* .dropdown .dropdown-menu {
-  top: 100%;
+.absolute-img {
+  top: calc(50% - 22px);
+  right: calc(85px + 1rem);
 }
 
-.dropup .dropdown-menu {
-  top: auto;
-  bottom: 100%;
+.absolute-svg {
+  top: calc(50% - 22px);
+  right: 1rem;
 }
 
-.dropend .dropdown-menu {
-  left: 100%;
-  right: auto;
+[dir="rtl"] .absolute-img {
+  left: calc(85px + 1rem); right: auto
 }
-
-.dropstart .dropdown-menu {
-  left: auto;
-  right: 100%;
-} */
-
-/* .dropstart .dropdown-menu,
-.dropend .dropdown-menu {
-  top: -1px;
-} */
+[dir="rtl"] .absolute-svg {
+  left: 1rem; right: auto
+}
